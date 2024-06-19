@@ -28,7 +28,7 @@ const Page = () => {
   const [isCheckingUsername, setIsCheckingUsername] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const debouncedUsername = useDebounceCallback(setUsername, 300)
+  const debounced = useDebounceCallback(setUsername, 500)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -49,7 +49,7 @@ const Page = () => {
         setUsernameMessage('')
         try {
           const response = await axios.get(
-            `/api/check-username-unique?username=${debouncedUsername}`
+            `/api/check-username-unique?username=${username}`
           )
           let message = response.data.message
           setUsernameMessage(message)
@@ -125,19 +125,19 @@ const Page = () => {
                       {...field}
                       onChange={(e) => {
                         field.onChange(e)
-                        setUsername(e.target.value)
+                        debounced(e.target.value)
                       }}
                     />
                   </FormControl>
                   {isCheckingUsername && <Loader2 className="animate-spin" />}
                   <p
                     className={`text-sm ${
-                      usernameMessage === 'Username is unique'
+                      usernameMessage === 'Username is available'
                         ? 'text-green-500'
                         : 'text-red-500'
                     }`}
                   >
-                    test {usernameMessage}
+                 {usernameMessage}
                   </p>
                   <FormMessage />
                 </FormItem>
